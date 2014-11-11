@@ -40,6 +40,7 @@ def build_image(config):
 			
 			dockerfile.append(line)
 
+	# first, do we have a stock build for the annex user?
 	with open("Dockerfile", 'wb') as t:
 		t.write('\n'.join(dockerfile))
 
