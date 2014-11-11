@@ -30,7 +30,7 @@ http {
 	server {
 		listen 80;
 
-		client_max_body_size ${client_max_body_size};
+		client_max_body_size ${client_max_body_size}M;
 		set $uv_public "uv_public=true;";
 
 		location / {
