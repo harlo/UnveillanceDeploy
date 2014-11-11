@@ -1,18 +1,23 @@
 FROM ubuntu:14.04
 MAINTAINER harlo <harlo.holmes@gmail.com>
 
-# ADD OUR PRIMARY USER
-RUN useradd -ms /bin/bash ${ANNEX_USER}
-
 # UPDATE
-#RUN apt-get update -qq
-#RUN apt-get install -yq wget nginx zip unzip openjdk-7-jre-headless
+RUN apt-get update
+RUN apt-get install -yq wget nginx zip unzip openjdk-7-jre-headless openssl git
+
+# ADD OUR PRIMARY USER
+RUN useradd -ms /bin/bash -p $(openssl passwd -1 ${ANNEX_USER_PWD}) ${ANNEX_USER}
+RUN adduser ${ANNEX_USER} sudo
 
 # ADD FILES GALORE
 ADD . /home/${ANNEX_USER}/${SUPER_PACKAGE}
+RUN mkdir /home/${ANNEX_USER}/.ssh
+
+# SET UP USER STUFF
 RUN chown -R ${ANNEX_USER}:${ANNEX_USER} /home/${ANNEX_USER}
 USER ${ANNEX_USER}
 ENV HOME /home/${ANNEX_USER}
 WORKDIR /home/${ANNEX_USER}/${SUPER_PACKAGE}
 
-EXPOSE 22 443
+# PORTS
+EXPOSE 22 80
