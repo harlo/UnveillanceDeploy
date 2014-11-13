@@ -1,0 +1,7 @@
+#! /bin/bash
+
+sudo cp nginx.conf /etc/nginx
+sudo service nginx start
+
+cd ${SUPER_PACKAGE}
+./setup.sh ../unveillance.secrets.json

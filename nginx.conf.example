@@ -35,7 +35,7 @@ http {
 
 		location / {
 			proxy_set_header Host $http_host;
-			proxy_pass http://localhost:${main_proxy_port};
+			proxy_pass http://localhost:${proxy_main_port};
 			${proxy_extras}
 		}
 

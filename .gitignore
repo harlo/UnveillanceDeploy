@@ -2,3 +2,8 @@ test.*
 nginx.conf.pull
 Dockerfile
 nginx.conf
+commit_image.txt
+last_config.json
+
+*Annex
+*Frontend
