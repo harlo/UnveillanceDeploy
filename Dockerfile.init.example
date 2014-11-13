@@ -21,3 +21,5 @@ ENV HOME /home/${ANNEX_USER}
 WORKDIR /home/${ANNEX_USER}
 
 CMD ["/bin/bash", "./install.sh"]
+
+EXPOSE 9200 ${EXTRA_PORTS}

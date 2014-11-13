@@ -4,4 +4,4 @@ sudo cp nginx.conf /etc/nginx
 sudo service nginx start
 
 cd ${SUPER_PACKAGE}
-./setup.sh ../unveillance.secrets.json
+./setup.sh /home/${ANNEX_USER}/unveillance.secrets.json
