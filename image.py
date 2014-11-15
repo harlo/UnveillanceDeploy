@@ -113,7 +113,10 @@ def build_image(config):
 		"sudo docker start unveillance_stub",
 		"sudo docker commit unveillance_stub %(p)s:%(a)s" % (c_map),
 		"sudo docker build -t %(p)s:%(a)s ." % (c_map),
-		"cd ../"
+		"sudo docker rm unveillance_stub",
+		"cd ../",
+		"echo \"Finished building!  Now try:\"",
+		"echo \"sudo docker run -iPt %(p)s:%(a)s\"" % (c_map)
 	]
 
 	with open("lib/commit_image.txt", 'wb') as c:
