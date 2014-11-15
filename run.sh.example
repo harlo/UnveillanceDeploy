@@ -2,4 +2,5 @@
 
 cd ${SUPER_PACKAGE}
 ./startup.sh
+cd lib/Annex
 ./tail.sh

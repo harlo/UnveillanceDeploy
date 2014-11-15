@@ -67,7 +67,6 @@ def build_image(config):
 
 	default_ports = " ".join([str(p) for p in [config['docker']['MAIN_PORT'], config['docker']['MAIN_PORT'] + 1]])
 	config['docker']['EXTRA_PORTS'] = " ".join([default_ports, config['docker']['EXTRA_PORTS']])
-	print config['docker']['EXTRA_PORTS']
 
 	replacements = [
 		("Dockerfile.init.example", docker_vars, 'docker'),
@@ -99,6 +98,8 @@ def build_image(config):
 		'p' : config['docker']['SUPER_PACKAGE'],
 		'h' : os.path.join("home", config['docker']['ANNEX_USER']),
 		'd' : ("unveillance/%s-%s" % (
+			config['docker']['SUPER_PACKAGE'], config['docker']['ANNEX_USER'])).lower(),
+		'f' : ("%s:%s" % (
 			config['docker']['SUPER_PACKAGE'], config['docker']['ANNEX_USER'])).lower()
 	}
 
@@ -111,19 +112,21 @@ def build_image(config):
 		"sudo docker run --name unveillance_stub -it %(d)s" % (c_map),
 		"mv Dockerfile.commit Dockerfile",
 		"sudo docker start unveillance_stub",
-		"sudo docker commit unveillance_stub %(p)s:%(a)s" % (c_map),
-		"sudo docker build -t %(p)s:%(a)s ." % (c_map),
+		"sudo docker commit unveillance_stub %(f)s" % (c_map),
+		"sudo docker stop unveillance_stub",
+		"sudo docker build -t %(f)s ." % (c_map),
 		"sudo docker rm unveillance_stub",
+		"sudo docker rmi %(d)s" % (c_map),
 		"cd ../",
 		"echo \"Finished building!  Now try:\"",
-		"echo \"sudo docker run -iPt %(p)s:%(a)s\"" % (c_map)
+		"echo \"sudo docker run -iPt %(f)s\"" % (c_map)
 	]
 
 	with open("lib/commit_image.txt", 'wb') as c:
 		c.write("\n".join(cmds))
 
-	config['docker']['BUILT_PACKAGE'] = "%(p)s:%(a)s" % (c_map)
-	docker_vars.append(('BUILT_PACKAGE', "%(p)s:%(a)s" % (c_map)))
+	config['docker']['BUILT_PACKAGE'] = c_map['f']
+	docker_vars.append(('BUILT_PACKAGE', c_map['f']))
 
 	with open("lib/Dockerfile.commit", 'wb') as c:
 		c.write("".join(builld_config(("Dockerfile.commit.example", docker_vars, 'docker'), config)))
