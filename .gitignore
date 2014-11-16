@@ -1,3 +1,4 @@
+*.pyc
 test.*
 nginx.conf.pull
 Dockerfile
@@ -6,5 +7,6 @@ commit_image.txt
 last_config.json
 
 lib
+configs
 *Annex
 *Frontend
