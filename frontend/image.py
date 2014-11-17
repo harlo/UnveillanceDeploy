@@ -46,5 +46,5 @@ def build_image(config):
 	})
 
 	config['docker']['ANNEX_LOCAL'] = config['secrets']['annex_local']
-
+	
 	return make_assets("frontend", config, docker_vars)

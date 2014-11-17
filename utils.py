@@ -34,6 +34,7 @@ def make_assets(mode, config, docker_vars):
 	}
 
 	config['docker']['BUILT_PACKAGE'] = c_map['f']
+	docker_vars.append(('BUILT_PACKAGE', c_map['f']))
 
 	replacements = [
 		("Dockerfile.init.example", docker_vars, 'docker'),
