@@ -1,0 +1,4 @@
+#! /bin/bash
+
+cd ${SUPER_PACKAGE}
+./setup.sh /home/${USER}/unveillance.secrets.json

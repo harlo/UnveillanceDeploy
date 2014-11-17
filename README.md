@@ -2,19 +2,25 @@
 
 This is a handy utility to build Docker containers dedicated to your Unveillance Annexes.  Simply add your Annex project into the root folder, and either run `./build_image.sh` and follow the prompts; or use `./build_image.sh /path/to/custom/config.json` after creating your own config.
 
+## Requirements
+
+You should already have python-dev and pip installed on your machine.
+
 ## Setup
 
 `./setup.py`
 
-## Adding an Annex project
+## Adding a project
 
 1.	`cd UnveillanceDeploy`
-1.	`cp /your/Annex/Package .` or `git clone git@host:your/AnnexPackage.git`
+1.	`cp /your/Unveillance/Package .` or `git clone git@host:your/UnveillancePackage.git`
 1.	if you cloned, you will also have to `git submodule update --init --recursive` 
 
 ## Configuration
 
-You can create a config.json file with the following format:
+You can create a config.json file with the following formats depending on the type of project (Annex or Frontend) you're building.  If any of these directives are missing, you will be prompted during the build process.
+
+### Annex
 
 	{
 		"secrets": {
@@ -31,7 +37,16 @@ You can create a config.json file with the following format:
 		}
 	}
 
-If any of these directives are missing, you will be prompted during the build process.
+### Frontend
+
+	{
+		"secrets" : {
+			"annex_config": "/path/to/config/file.json"
+		},
+		"docker" : {
+			"SUPER_PACKAGE" : "CompassFrontend",
+		}
+	}
 
 ## Deploy
 
