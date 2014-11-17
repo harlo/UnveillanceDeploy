@@ -1,4 +1,5 @@
 import os
+from json import loads
 from sys import argv, exit
 
 if __name__ == "__main__":	
@@ -18,9 +19,11 @@ if __name__ == "__main__":
 		config = { 'secrets' : { 'secrets_file' : argv[2] }}
 
 	if config is None and os.path.exists(os.path.join(argv[1], "last_config.json")):
+		from fabric.operations import prompt
+
 		use_last_config = prompt("Use last configuration (y or n)? [DEFAULT y]: ")
 		if len(use_last_config) == 0 or use_last_config == "y":
-			config = "last_config.json"
+			config = os.path.join(argv[1], "last_config.json")
 
 	if config is None:
 		config = {}

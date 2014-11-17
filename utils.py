@@ -3,10 +3,15 @@ from json import dumps
 from fabric.api import local, settings
 from fabric.operations import prompt
 
-def make_assets(config, docker_vars):
-	if not os.path.exists(config['docker']['SUPER_PACKAGE']):
-		print "You don't have package %s installed.\nAdd it by running git submodule add [URL]"
+def make_assets(mode, config, docker_vars):
+	par_dir = os.path.abspath(os.path.join(__file__, os.pardir))
+	this_dir = os.getcwd()
+
+	if not os.path.exists(os.path.join(par_dir, config['docker']['SUPER_PACKAGE'])):
+		print "You don't have package %s installed.\nAdd it by running git submodule add [URL]" % config['docker']['SUPER_PACKAGE']
 		return False
+
+	os.chdir(os.path.join(par_dir, mode))
 
 	if not os.path.exists("lib"):
 		with settings(warn_only=True):
@@ -16,11 +21,6 @@ def make_assets(config, docker_vars):
 	with open("lib/make/unveillance.secrets.json", 'wb') as t:
 		t.write(dumps(config['secrets']))
 
-	with settings(warn_only=True):
-		local("mv lib/install.sh lib/make")
-		local("mv lib/run.sh lib/make")
-		local("chmod +x lib/make/*.sh")
-
 	c_map = {
 		'a' : config['docker']['USER'],
 		'p' : config['docker']['SUPER_PACKAGE'],
@@ -28,7 +28,9 @@ def make_assets(config, docker_vars):
 		'd' : ("unveillance/%s-%s" % (
 			config['docker']['SUPER_PACKAGE'], config['docker']['USER'])).lower(),
 		'f' : ("%s:%s" % (
-			config['docker']['SUPER_PACKAGE'], config['docker']['USER'])).lower()
+			config['docker']['SUPER_PACKAGE'], config['docker']['USER'])).lower(),
+		'r' : par_dir,
+		'm' : mode
 	}
 
 	config['docker']['BUILT_PACKAGE'] = c_map['f']
@@ -45,11 +47,11 @@ def make_assets(config, docker_vars):
 			t.write(''.join(build_config(f, config)))
 
 	cmds = [
-		"cd annex/lib",
-		"mv ../../%(p)s make" % (c_map),
+		"cd %(r)s/%(m)s/lib" % (c_map),
+		"mv %(r)s/%(p)s make" % (c_map),
 		"mv Dockerfile.init Dockerfile",
 		"sudo docker build -t %(d)s ." % (c_map),
-		"mv make/%(p)s ../../" % (c_map),
+		"mv make/%(p)s %(r)s" % (c_map),
 		"sudo docker run --name unveillance_stub -it %(d)s" % (c_map),
 		"mv Dockerfile.commit Dockerfile",
 		"sudo docker start unveillance_stub",
@@ -58,7 +60,7 @@ def make_assets(config, docker_vars):
 		"sudo docker build -t %(f)s ." % (c_map),
 		"sudo docker rm unveillance_stub",
 		"sudo docker rmi %(d)s" % (c_map),
-		"cd ../../",
+		"cd %(r)s" %(c_map),
 		"echo \"Finished building!  Now try:\"",
 		"echo \"sudo docker run -iPt %(f)s\"" % (c_map)
 	]
@@ -66,6 +68,12 @@ def make_assets(config, docker_vars):
 	with open("lib/commit_image.txt", 'wb') as c:
 		c.write("\n".join(cmds))
 
+	with settings(warn_only=True):
+		local("mv lib/install.sh lib/make")
+		local("mv lib/run.sh lib/make")
+		local("chmod +x lib/make/*.sh")
+
+	os.chdir(this_dir)
 	return True
 
 def verify_config(config, vars):
