@@ -1,5 +1,0 @@
-#! /bin/bash
-
-sudo service nginx start
-cd ${SUPER_PACKAGE}
-./startup.sh

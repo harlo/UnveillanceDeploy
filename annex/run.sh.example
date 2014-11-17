@@ -1,0 +1,8 @@
+#! /bin/bash
+
+sudo service ssh start
+
+cd ${SUPER_PACKAGE}
+./startup.sh
+cd lib/Annex
+./tail.sh

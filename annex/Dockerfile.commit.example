@@ -3,4 +3,4 @@ MAINTAINER harlo <harlo.holmes@gmail.com>
 
 CMD ["/bin/bash", "./run.sh"]
 
-EXPOSE 22 80
+EXPOSE 22 9200 ${EXTRA_PORTS}

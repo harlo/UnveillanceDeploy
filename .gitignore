@@ -1,9 +1,10 @@
-test.*
-nginx.conf.pull
-Dockerfile
-nginx.conf
+*.pyc
+*test.*
+*/Dockerfile
 commit_image.txt
-last_config.json
+*/last_config.json
 
+*/lib
+configs
 *Annex
 *Frontend

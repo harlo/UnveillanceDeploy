@@ -1,0 +1,6 @@
+FROM ${BUILT_PACKAGE}
+MAINTAINER harlo <harlo.holmes@gmail.com>
+
+CMD ["/bin/bash", "./run.sh"]
+
+EXPOSE 22 ${MAIN_PORT}
