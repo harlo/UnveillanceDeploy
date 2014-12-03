@@ -47,23 +47,36 @@ def make_assets(mode, config, docker_vars):
 		with open(os.path.join("lib", f[0].replace(".example","")), 'wb') as t:
 			t.write(''.join(build_config(f, config)))
 
+	with settings(warn_only=True):
+		docker_is = local("which docker", capture=True)
+	
+	if len(docker_is) == 0:
+		print "Do you have docker installed?"
+		docker_is = prompt("If so, what is its path?")
+
+		if len(docker_is) == 0:
+			print "No Docker to use!  Please install docker!"
+			return False
+	
+	c_map['docker_is'] = "sudo %s" % docker_is
+
 	cmds = [
 		"cd %(r)s/%(m)s/lib" % (c_map),
 		"mv %(r)s/%(p)s make" % (c_map),
 		"mv Dockerfile.init Dockerfile",
-		"sudo docker build -t %(d)s ." % (c_map),
+		"%(docker_is)s build -t %(d)s ." % (c_map),
 		"mv make/%(p)s %(r)s" % (c_map),
-		"sudo docker run --name unveillance_stub -it %(d)s" % (c_map),
+		"%(docker_is)s run --name unveillance_stub -it %(d)s" % (c_map),
 		"mv Dockerfile.commit Dockerfile",
-		"sudo docker start unveillance_stub",
-		"sudo docker commit unveillance_stub %(f)s" % (c_map),
-		"sudo docker stop unveillance_stub",
-		"sudo docker build -t %(f)s ." % (c_map),
-		"sudo docker rm unveillance_stub",
-		"sudo docker rmi %(d)s" % (c_map),
+		"%(docker_is)s start unveillance_stub" % (c_map),
+		"%(docker_is)s commit unveillance_stub %(f)s" % (c_map),
+		"%(docker_is)s stop unveillance_stub" % (c_map),
+		"%(docker_is)s build -t %(f)s ." % (c_map),
+		"%(docker_is)s rm unveillance_stub" % (c_map),
+		"%(docker_is)s rmi %(d)s" % (c_map),
 		"cd %(r)s" %(c_map),
 		"echo \"Finished building!  Now try:\"",
-		"echo \"sudo docker run -iPt %(f)s\"" % (c_map)
+		"echo \"%(docker_is)s run -iPt %(f)s\"" % (c_map)
 	]
 
 	with open("lib/commit_image.txt", 'wb') as c:
