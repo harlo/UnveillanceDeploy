@@ -50,4 +50,12 @@ You can create a config.json file with the following formats depending on the ty
 
 ## Deploy
 
+### Annex
+
+Run `./build_image.sh annex` and follow the prompts; or use `./build_image.sh annex /path/to/custom/config.json`
+
 Your Docker image is now available and can be deployed at any time via Docker using `sudo docker run -iPt compassannex:unveillance` (or whatever the image turns out to be named, given your inputs).
+
+### Frontend
+
+...TBD

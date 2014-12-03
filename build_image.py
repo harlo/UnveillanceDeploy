@@ -1,5 +1,5 @@
 import os
-from json import loads
+from json import loads, dumps
 from sys import argv, exit
 
 if __name__ == "__main__":	
@@ -7,8 +7,10 @@ if __name__ == "__main__":
 		exit(-1)
 
 	if argv[1] == "frontend":
+		from frontend.vars import docker_vars, sec_vars
 		from frontend.image import build_image
 	elif argv[1] == "annex":
+		from annex.vars import docker_vars, sec_vars
 		from annex.image import build_image
 	else:
 		exit(-1)
@@ -16,7 +18,7 @@ if __name__ == "__main__":
 	config = None
 
 	if len(argv) == 3:
-		config = { 'secrets_file' : argv[2] }
+		config = argv[2]
 
 	if config is None and os.path.exists(os.path.join(argv[1], "last_config.json")):
 		from fabric.operations import prompt
@@ -36,11 +38,14 @@ if __name__ == "__main__":
 			exit(-1)
 
 	return_dir = os.getcwd()
-	os.chdir(argv[1])
+	os.chdir(argv[1])		
 
-	if build_image(config):
-		os.chdir(return_dir)
-		exit(0)
+	from utils import verify_config
+	config = verify_config(config, [('docker', docker_vars), ('secrets', sec_vars)])
 
+	with open("last_config.json", 'wb+') as c:
+		c.write(dumps(config))
+
+	res = build_image(config)
 	os.chdir(return_dir)
-	exit(-1)
+	exit(0 if res else -1)
