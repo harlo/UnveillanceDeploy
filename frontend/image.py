@@ -24,15 +24,15 @@ def build_image(config):
 		('gdrive_auth_no_ask', True)
 	]
 
-	if 'secrets' in config.keys() and 'secrets_file' in config['secrets'].keys():
+	if 'secrets_file' in config.keys():
 		try:
-			with open(config['secrets']['secrets_file'], 'rb') as C:
+			with open(config['secrets_file'], 'rb') as C:
 				annex_config = loads(C.read())
-				config['secrets'].update(annex_config)
+				config.update(annex_config)
 
-				del config['secrets']['secrets_file']
+				del config['secrets_file']
 		except Exception as e:
-			print "bad secrets file"
+			print "bad secrets file: %s" % e
 			return False
 
 	config = verify_config(config, [('docker', docker_vars), ('secrets', sec_vars)])

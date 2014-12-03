@@ -24,6 +24,17 @@ def build_image(config):
 		('uv_uuid', "unveillance_annex")
 	]
 
+	if 'secrets_file' in config.keys():
+		try:
+			with open(config['secrets_file'], 'rb') as C:
+				annex_config = loads(C.read())
+				config.update(annex_config)
+
+				del config['secrets_file']
+		except Exception as e:
+			print "bad secrets file: %s" % e
+			return False
+
 	config = verify_config(config, [('docker', docker_vars), ('secrets', sec_vars)])
 
 	with open("last_config.json", 'wb+') as c:

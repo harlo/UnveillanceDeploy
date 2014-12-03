@@ -30,8 +30,8 @@ You can create a config.json file with the following formats depending on the ty
 		},
 		"docker": {
 			"SUPER_PACKAGE": "CompassAnnex", 			# the name of the package you wish to deploy
-			"ANNEX_USER": "unveillance", 				# unix user
-			"ANNEX_USER_PWD" : "ohmigerd",				# user's password.  you should remember it, but it's not too important because sudoer
+			"USER": "unveillance", 				# unix user
+			"USER_PWD" : "ohmigerd",				# user's password.  you should remember it, but it's not too important because sudoer
 			"EXTRA_PORTS": "8887",						# if you require extra ports to be opened, list them here: space-separated string
 			"ssh_root": "/home/unveillance/.ssh"		# where we'll put the Annex user's .ssh
 		}

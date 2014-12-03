@@ -16,7 +16,7 @@ if __name__ == "__main__":
 	config = None
 
 	if len(argv) == 3:
-		config = { 'secrets' : { 'secrets_file' : argv[2] }}
+		config = { 'secrets_file' : argv[2] }
 
 	if config is None and os.path.exists(os.path.join(argv[1], "last_config.json")):
 		from fabric.operations import prompt
