@@ -18,7 +18,7 @@ def make_assets(mode, config, docker_vars):
 			local("mkdir lib")
 			local("mkdir lib/make")
 
-	with open("lib/make/unveillance.secrets.json", 'wb') as t:
+	with open("lib/make/unveillance.secrets.%s.json" % mode, 'wb') as t:
 		t.write(dumps(config['secrets']))
 
 	c_map = {

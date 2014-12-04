@@ -2,6 +2,10 @@
 
 sudo service ssh start
 
-cd ${SUPER_PACKAGE}
+source ~/.bash_profile
+
+cd ~/${SUPER_PACKAGE}
 ./startup.sh
-./tail.sh
+
+cd ~/${ANNEX_PACKAGE}/lib/Annex
+./startup.sh && ./tail.sh

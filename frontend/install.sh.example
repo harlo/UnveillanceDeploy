@@ -1,0 +1,5 @@
+#! /bin/bash
+source ~/.bash_profile
+
+cd ${SUPER_PACKAGE}
+./setup.sh /home/${USER}/unveillance.secrets.frontend.json

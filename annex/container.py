@@ -2,7 +2,7 @@ import json, sys, os, re
 from fabric.api import local, settings
 from fabric.context_managers import hide
 
-def get_config(package_name, save_as=None):
+def get_config(package_name, as_local=True):
 	try:
 		config = json.loads(sys.stdin.read())[0]
 	except Exception as e:
@@ -39,17 +39,41 @@ def get_config(package_name, save_as=None):
 				continue
 
 	if package_config is not None:
-		package_config = json.loads(package_config)
+		package_config = {'secrets' : json.loads(package_config), 'docker' : {}}
 
-	s = package_config['server_port']
-	m = package_config['server_message_port']
+	s = package_config['secrets']['server_port']
+	m = package_config['secrets']['server_message_port']
+	package_config['secrets']['server_user'] = c_map['u']
 
-	package_config.update({
-		'annex_remote_port' : c_map['p'],
-		'server_port' : int(config['HostConfig']['PortBindings']['%d/tcp' % s][0]['HostPort']),
-		'server_message_port' : int(config['HostConfig']['PortBindings']['%d/tcp' % m][0]['HostPort']),
-		'server_force_ssh' : True,
-		'server_user' : c_map['u']
+	annex_ports = []
+	as_local = bool(as_local)
+
+	if as_local:
+		package_config['secrets'].update({
+			'annex_remote_port' : c_map['p'],
+			'server_port' : int(config['HostConfig']['PortBindings']['%d/tcp' % s][0]['HostPort']),
+			'server_message_port' : int(config['HostConfig']['PortBindings']['%d/tcp' % m][0]['HostPort']),
+			'server_force_ssh' : True
+		})
+
+	else:
+		package_config['secrets'].update({
+			'annex_local' : os.path.join(c_map['h'], "annex_local"),
+			'ssh_root' : os.path.join(c_map['h'], ".ssh")
+		})
+
+		package_config['docker'].update({
+			'MAIN_PORT' : 8888,
+			'ssh_root' : package_config['secrets']['ssh_root']
+		})
+
+	for p in config['HostConfig']['PortBindings'].keys():
+		annex_ports.append(str(p.replace("/tcp", "")))
+
+	package_config['docker'].update({
+		'USER' : package_config['secrets']['server_user'],
+		'ANNEX_PACKAGE' : package_name,
+		'ANNEX_PORTS' : " ".join(annex_ports)
 	})
 
 	i = "%s.%s" % (config['Config']['Image'].replace(":", "-"), config['Config']['Hostname'])
