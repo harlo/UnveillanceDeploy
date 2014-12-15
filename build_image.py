@@ -40,11 +40,17 @@ if __name__ == "__main__":
 	return_dir = os.getcwd()
 	os.chdir(argv[1])		
 
+	from copy import deepcopy
 	from utils import verify_config
 	config = verify_config(config, [('docker', docker_vars), ('secrets', sec_vars)])
 
 	with open("last_config.json", 'wb+') as c:
-		c.write(dumps(config))
+		last_config = deepcopy(config)
+		if 'USER_PWD' in last_config['docker'].keys():
+			del last_config['docker']['USER_PWD']
+
+		c.write(dumps(last_config))
+		del last_config
 
 	res = build_image(config)
 	os.chdir(return_dir)

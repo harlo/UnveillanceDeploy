@@ -4,7 +4,8 @@ docker_vars = [
 	('USER_PWD', "unveillance"),
 	('ssh_root', "/home/unveillance/.ssh"),
 	('EXTRA_PORTS', ""),
-	('MAIN_PORT', 8889)
+	('MAIN_PORT', 8889),
+	('EXTRA_DATA', "")
 ]
 
 sec_vars = [

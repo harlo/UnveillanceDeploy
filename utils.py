@@ -87,6 +87,9 @@ def make_assets(mode, config, docker_vars):
 		local("mv lib/run.sh lib/make")
 		local("chmod +x lib/make/*.sh")
 
+		if "EXTRA_DATA" in config['docker'].keys() and os.path.exists(config['docker']['EXTRA_DATA']):
+			local("cp -R %s/* lib/make" % config['docker']['EXTRA_DATA'])
+
 	os.chdir(this_dir)
 	return True
 
